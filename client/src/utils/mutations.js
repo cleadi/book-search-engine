@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const LOGIN_USER = gql`
   mutation login($email: String!, $password: String!) {
@@ -42,6 +42,20 @@ export const SAVE_BOOK = gql`
   }
 `;
 
-// TODO: Create a REMOVE_BOOK endpoint (Hint: it will look fairly similar to the SAVE_BOOK endpoint above, but NOT THE SAME)
-
-
+export const REMOVE_BOOK = gql`
+  mutation removeBook($bookId: String!) {
+    removeBook(bookId: $bookId) {
+      _id
+      username
+      email
+      savedBooks {
+        bookId
+        authors
+        image
+        description
+        title
+        link
+      }
+    }
+  }
+`;
