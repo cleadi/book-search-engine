@@ -1,41 +1,32 @@
-import React from 'react';
+import React, { useState } from "react";
+import { useQuery, useMutation } from "@apollo/client";
+import { REMOVE_BOOK } from "../utils/mutations";
+import { GET_ME } from "../utils/queries";
 import {
   Jumbotron,
   Container,
   CardColumns,
   Card,
   Button,
-} from 'react-bootstrap';
-
-
-// TODO:  import the two hooks from Apollo Client you'll be using below
-import { QUERY_ME } from '../utils/queries';
-import { REMOVE_BOOK } from '../utils/mutations';
-import { removeBookId } from '../utils/localStorage';
-
-import Auth from '../utils/auth';
+} from "react-bootstrap";
+import Auth from "../utils/auth";
+import { removeBookId } from "../utils/localStorage";
 
 const SavedBooks = () => {
-  // TODO: Call the QUERY_ME query and destructure the loading and data response properties
-  const [removeBook, { error }] = useMutation(REMOVE_BOOK);
-
-  const userData = data?.me || {};
-
-  // create function that accepts the book's mongo _id value as param and deletes the book from the database
+  const { loading, error, data } = useQuery(GET_ME, {
+    fetchPolicy: "network-only",
+  });
+  const userData = data?.me || [];
+  const [removeBook] = useMutation(REMOVE_BOOK);
   const handleDeleteBook = async (bookId) => {
-    // get token
     const token = Auth.loggedIn() ? Auth.getToken() : null;
-
     if (!token) {
       return false;
     }
-
     try {
       const { data } = await removeBook({
         variables: { bookId },
       });
-
-      // upon success, remove book's id from localStorage
       removeBookId(bookId);
     } catch (err) {
       console.error(err);
@@ -57,9 +48,9 @@ const SavedBooks = () => {
         <h2>
           {userData.savedBooks?.length
             ? `Viewing ${userData.savedBooks.length} saved ${
-                userData.savedBooks.length === 1 ? 'book' : 'books'
+                userData.savedBooks.length === 1 ? "book" : "books"
               }:`
-            : 'You have no saved books!'}
+            : "You have no saved books!"}
         </h2>
         <CardColumns>
           {userData.savedBooks?.map((book) => {
